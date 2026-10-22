@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#d4af37">
+<title>UWAISE__UYS</title>
+<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiVVdBSVNFX19VWVMiLCJzaG9ydF9uYW1lIjoiVVdBSVNFX19VWVMiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzA3MGIxOCIsInRoZW1lX2NvbG9yIjoiI2Q0YWYzNyJ9">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#070b18;color:#fff;font-family:system-ui,Segoe UI}
+.top{background:#0e1428;padding:22px;text-align:center;border-bottom:2px solid #d4af37;position:sticky;top:0;z-index:10}
+.top h1{margin:0;color:#d4af37;letter-spacing:6px;font-size:26px}.top p{margin:4px 0 0;color:#888;font-size:12px;letter-spacing:2px}
+.tabs{display:flex;background:#0e1428;position:sticky;top:77px;z-index:9}
+.tab{flex:1;padding:14px;text-align:center;color:#666;font-weight:700;border-bottom:3px solid transparent;cursor:pointer}
+.tab.active{color:#d4af37;border-color:#d4af37}
+.card{margin:12px;background:#111a2e;border:1px solid #1e2a4a;border-radius:16px;padding:16px}
+input,select,textarea{width:100%;padding:13px;margin:6px 0;border-radius:10px;background:#070b18;border:1px solid #333;color:#fff;outline:none}
+input:focus{border-color:#d4af37}
+.btn{width:100%;padding:14px;border:none;border-radius:10px;font-weight:800;cursor:pointer}
+.gold{background:#d4af37;color:#000}.row{display:flex;gap:8px}.row>div{flex:1;text-align:center;background:#0a0f1e;padding:12px;border-radius:10px}
+.big{font-size:22px;color:#d4af37;font-weight:800}.small{font-size:11px;color:#888}
+.item{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #1e2a4a;font-size:14px}
+.badge{font-size:10px;padding:3px 7px;border-radius:20px;background:#1e2a4a;color:#aaa}
+</style>
+</head>
+<body>
+<div class="top"><h1>UWAISE__UYS</h1><p>DAILY • MONTHLY • SALARY • NOTES</p></div>
+<div class="tabs">
+<div class="tab active" onclick="openTab('daily',this)">DAILY</div>
+<div class="tab" onclick="openTab('monthly',this)">MONTHLY</div>
+<div class="tab" onclick="openTab('salary',this)">SALARY</div>
+<div class="tab" onclick="openTab('notes',this)">NOTES</div>
+</div>
+
+<!-- DAILY -->
+<div id="daily">
+<div class="card"><div class="row"><div><div class="small">Today Income</div><div class="big" id="dInc">₹0</div></div><div><div class="small">Today Expense</div><div class="big" id="dExp" style="color:#f87171">₹0</div></div></div></div>
+<div class="card">
+<select id="eType"><option value="salary">💼 Salary</option><option value="extra">💰 Extra Income</option><option value="expense">💸 Expense</option></select>
+<input id="eAmt" type="number" placeholder="Amount - Eg: 500">
+<input id="eDesc" placeholder="Details - Eg: Food, Petrol, Freelance">
+<button class="btn gold" onclick="add()">ADD ENTRY</button>
+</div>
+<div class="card"><b>Today History</b><div id="dList" style="margin-top:10px"></div></div>
+</div>
+
+<!-- MONTHLY -->
+<div id="monthly" style="display:none">
+<div class="card"><div class="row"><div><div class="small">Income</div><div class="big" id="mInc">₹0</div></div><div><div class="small">Expense</div><div class="big" id="mExp" style="color:#f87171">₹0</div></div><div><div class="small">Saving</div><div class="big" id="mSave" style="color:#4ade80">₹0</div></div></div></div>
+<div class="card"><b>This Month Full Details</b><div id="mList" style="margin-top:10px"></div></div>
+</div>
+
+<!-- SALARY -->
+<div id="salary" style="display:none">
+<div class="card"><div class="row"><div><div class="small">Total Salary</div><div class="big" id="sSal">₹0</div></div><div><div class="small">Extra Income</div><div class="big" id="sExt" style="color:#4ade80">₹0</div></div></div></div>
+<div class="card"><b>Salary & Extra History</b><div id="sList" style="margin-top:10px"></div></div>
+</div>
+
+<!-- NOTES -->
+<div id="notes" style="display:none">
+<div class="card"><textarea id="nText" rows="3" placeholder="Special Note - Eg: Bike loan 2000 kodukkan und, Ammavan cash..."></textarea><button class="btn gold" onclick="addNote()">SAVE SPECIAL NOTE</button></div>
+<div class="card"><b>Your Special Notes</b><div id="nList" style="margin-top:10px"></div></div>
+</div>
+
+<script>
+let data=JSON.parse(localStorage.getItem('UWA_V3')||'[]');
+let notes=JSON.parse(localStorage.getItem('UWA_NOTES_V3')||'[]');
+function add(){
+ let t=eType.value,a=parseFloat(eAmt.value),d=eDesc.value.trim();
+ if(!a||!d){alert('Amount & Details ezhuthu machane!');return}
+ data.push({t,a,d,dt:new Date().toISOString()}); eAmt.value=''; eDesc.value='';
+ localStorage.setItem('UWA_V3',JSON.stringify(data)); render();
+}
+function addNote(){
+ let txt=nText.value.trim(); if(!txt)return;
+ notes.push({txt,dt:new Date().toLocaleString()}); nText.value='';
+ localStorage.setItem('UWA_NOTES_V3',JSON.stringify(notes)); render();
+}
+function openTab(id,el){
+ ['daily','monthly','salary','notes'].forEach(x=>document.getElementById(x).style.display=x==id?'block':'none');
+ document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); render();
+}
+function render(){
+ let today=new Date().toDateString(), month=new Date().getMonth(), year=new Date().getFullYear();
+ let dI=0,dE=0,mI=0,mE=0,sSal=0,sExt=0; let dHtml='',mHtml='',sHtml='';
+ [...data].reverse().forEach(e=>{
+  let ed=new Date(e.dt); let isToday=ed.toDateString()==today; let isMonth=ed.getMonth()==month && ed.getFullYear()==year;
+  if(isToday){ if(e.t=='expense') dE+=e.a; else dI+=e.a; }
+  if(isMonth){ if(e.t=='expense') mE+=e.a; else mI+=e.a; if(e.t=='salary') sSal+=e.a; if(e.t=='extra') sExt+=e.a; }
+  let color=e.t=='expense'?'#f87171':'#4ade80'; let sign=e.t=='expense'?'-':'+';
+  let badge=e.t.toUpperCase();
+  let row=`<div class=item><span><span class=badge>${badge}</span> ${e.d}<br><small style=color:#666>${ed.toLocaleDateString()}</small></span><b style=color:${color}>${sign}₹${e.a}</b></div>`;
+  if(isToday) dHtml+=row; if(isMonth) mHtml+=row; if(e.t!='expense') sHtml+=row;
+ });
+ document.getElementById('dInc').innerText='₹'+dI; document.getElementById('dExp').innerText='₹'+dE;
+ document.getElementById('mInc').innerText='₹'+mI; document.getElementById('mExp').innerText='₹'+mE;
+ document.getElementById('mSave').innerText='₹'+(mI-mE); document.getElementById('sSal').innerText='₹'+sSal; document.getElementById('sExt').innerText='₹'+sExt;
+ document.getElementById('dList').innerHTML=dHtml||'<small style=color:#666>No entry today</small>';
+ document.getElementById('mList').innerHTML=mHtml||'<small style=color:#666>No entry this month</small>';
+ document.getElementById('sList').innerHTML=sHtml||'<small style=color:#666>No salary yet</
